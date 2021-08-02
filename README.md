@@ -11,8 +11,6 @@ A simple daily weather WordPress Widget for the Forgotten Realms, specifically t
 
 ## Usage
 
-The WordPress Widget Boilerplate is ready to activate as-is (and it includes a sample widget with a title, content, and checkbox).
-
 1. Copy the `RealmsWeatherWidget` directory into your `wp-content/plugins` directory
 2. Navigate to the "Plugins" dashboard page
 3. Locate the menu item that reads "Realms Weather WordPress Widget"
