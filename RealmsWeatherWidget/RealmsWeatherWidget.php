@@ -2,43 +2,47 @@
 /*
 Plugin Name: Realms Weather WordPress Widget
 Plugin URI: https://www.fantasist.net/scroll/index.php/forgotten-realms-weather-widget/
-Version: 1.01
-Description: A simple daily weather WordPress Widget for the Forgotten Realms, specifically the city of Waterdeep, using the Third Edition Forgotten Realms Campaign setting publication year to set the Forgotten Realms year.  Icons are from https://www.deviantart.com/azuresol/art/Sketcy-Weather-Icons-Glow-ed-135079488
+Version: 2.01
+Description: A simple daily weather WordPress Widget for the Forgotten Realms, specifically the city of Waterdeep, using the Third Edition Forgotten Realms Campaign setting publication year to set the Forgotten Realms year. Icons are from https://www.deviantart.com/azuresol/art/Sketcy-Weather-Icons-Glow-ed-135079488
 Author: J K Hoffman
 Author URI: https://JKHoffman.com/
 */
- 
+
 class RealmsWeather_Widget extends WP_Widget
 {
-  function RealmsWeather_Widget()
+  function __construct()
   {
     $widget_ops = array('classname' => 'RealmsWeather_Widget', 'description' => 'Realms Weather Widget');
-    $this->WP_Widget('RealmsWeather_Widget', 'Realms Weather Widget', $widget_ops);
+    parent::__construct('RealmsWeather_Widget', 'Realms Weather Widget', $widget_ops);
   }
- 
+
   function form($instance)
   {
-    $instance = wp_parse_args((array) $instance, array( 'title' => '' ));
+    $instance = wp_parse_args((array) $instance, array('title' => ''));
     $title = $instance['title'];
-?>
-  <p><label for="<?php echo $this->get_field_id('title'); ?>">Title: <input class='widefat' id='<?php echo $this->get_field_id('title'); ?>' name='<?php echo $this->get_field_name('title'); ?>' type='text' value='<?php echo attribute_escape($title); ?>' /></label></p>
-<?php
+    ?>
+    <p><label for="<?php echo $this->get_field_id('title'); ?>">Title: <input class='widefat' id='<?php echo $this->get_field_id('title'); ?>' name='<?php echo $this->get_field_name('title'); ?>' type='text' value='<?php echo esc_attr($title); ?>' /></label></p>
+    <?php
   }
- 
+
   function update($new_instance, $old_instance)
   {
     $instance = $old_instance;
-    $instance['title'] = $new_instance['title'];
+    $instance['title'] = sanitize_text_field($new_instance['title']);
     return $instance;
   }
- 
+
   function widget($args, $instance)
   {
     extract($args, EXTR_SKIP);
- 
+
     echo $before_widget;
     $title = empty($instance['title']) ? '' : apply_filters('widget_title', $instance['title']);
     
+    if (!empty($title)) {
+        echo $before_title . $title . $after_title;
+    }
+ 
     // Use the day of the year to get a daily changing
 // quote changing (z = 0 till 365)
 $DayOfTheYear = date('z'); 
@@ -745,9 +749,9 @@ $RandomFall = array(
     echo $after_widget;
   }
 }
-add_action( 'widgets_init', create_function('', 'return register_widget("RealmsWeather_Widget");') );
-
-//This should allow short code for the widget
-add_shortcode('RealmsWeather','widget');
-
+function RealmsWeather_Add_Widget_Function()
+{
+  register_widget('RealmsWeather_Widget');
+}
+add_action('widgets_init', 'RealmsWeather_Add_Widget_Function');
 ?>
